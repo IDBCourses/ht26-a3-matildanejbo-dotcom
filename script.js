@@ -27,12 +27,17 @@ import { createShape } from "./shape.js";
 // Settings variables should contain all of the "fixed" parts of your programs
 // For example: which notes you can play, how fast things move, the tempo.
 const note = "C4"; // the note played when the pointer goes down
-
+const aMinorChord = ["A3", "C4", "E4"];
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
 // For example: where the pointer is, how fast it's moving, or whether a drone is on.
 const shape = createShape("shape");
-  shape.setPosition(0.5, 0.5); // This should maybe be in Setup
+shape.setPosition(0.5, 0.5); // This should maybe be in Setup
+
+const circle = createShape("cicle");
+circle.setPosition(0.3, 0.3);
+
+let inside = createShape;   //Stay or take away?
 
 let octave = 4;
 
@@ -40,7 +45,7 @@ let octave = 4;
 // Make the instruments and plug them into the speakers.
 const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
 
-const synth1 = new Tone.Synth().toDestination(); //This is going to be changed to flute
+const synth1 = new Tone.AMSynth().toDestination(); //This is going to be changed to flute
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
 function update() {
@@ -59,9 +64,10 @@ function use() {
 // KEYBOARD ---------------
 
 function noteFor(key) {
-  if (key==="q") {
+  //Rename to keydown?
+  if (key === "q") {
     return "A" + octave;
-  } else if(key==="w") {
+  } else if (key === "w") {
     return "B" + octave;
   } else if (key === "e") {
     return "C" + octave;
@@ -73,49 +79,56 @@ function noteFor(key) {
     return "F" + octave;
   } else if (key === "u") {
     return "G" + octave;
+  } else if (key === "i") {
+    playAMinorChord();       //Why does it double play? How do I change that?
   }
   return "";
-
 }
 
-/*function startNote(event) {
+function startNote(event) {
   Tone.start();
-  if (event && event.repeat) {
+  if (event.repeat) {
     return;
   }
+
   // The thing above worked.
   /*if (event.repeat) {
     return;
    } */
 
-  /*   const note = noteFor(event.key);
+  const note = noteFor(event.key);
 
-     if (note !== "") {
-      synth1.triggerAttack(note);
-
-     }
-
-  } */
-
-function startDetune() {
-
+  if (note !== "") {
+    synth1.triggerAttack(note);
+  } else if (note !== "") {
+    //Test för chord
+    synth.triggerAttack(note);
+  }
 }
 
-function stopNote(event) {         //Doubble check the logic of this one.
-    if(noteFor(event.key) !== "") {
-      synth1.triggerRelease();
-    }
+function playAMinorChord() {
+  synth.triggerAttackRelease(aMinorChord, "2n"); //måste få den att stoppa
+}
+
+function pointerEnter(event) {
+  //pointerenter är = shape? Let currentshape..
+  inside = true;
+  if (createShape) {
+    startDetune();
   }
+  /*else if (createShape = false) {
+    return;
+  } */
+}
 
+function pointerleave(event) {
+  inside = false;
+  synth.triggerRelease();
+}
 
-function pointerMove(event) {
-  let normX = event.clientX / window.innerWidth;
-  let normY = event.clientY / window.innerHeight;
-
- /* console.log(normX, normY);
-    synth1.detune.value = -1200 + normX * 2400; */
-
-/* if(pointerDown && shape) {
+function startDetune(key) {
+  pointerMove = key === "z" && pointerEnter; //z is still not working but detune kinda do.
+  /* if(pointerDown && shape) {     //Look in physical notes 26-10, page 10.
     startNote();
     console.log(normX, normY);
     synth1.detune.value = -1200 + normX * 2400;
@@ -126,7 +139,37 @@ function pointerMove(event) {
   } */
 }
 
-    // Take in this function again it is Davids.
+function stopNote(event) {
+  //Doubble check the logic of this one.
+  if (noteFor(event.key) !== "") {
+    synth1.triggerRelease();
+    synth.triggerRelease();
+  }
+}
+
+function pointerMove(event) {
+  if (pointerEnter && shape) {
+    let normX = event.clientX  / window.innerWidth;
+    let normY = event.clientY  / window.innerHeight;
+
+
+
+    console.log(normX, normY);
+    synth1.detune.value = -1200 + normX * 2400; //-1200 + normX * 2400;
+  }
+
+  /* if(pointerDown && shape) {
+    startNote();
+    console.log(normX, normY);
+    synth1.detune.value = -1200 + normX * 2400;
+  } else
+
+  if(!(pointerDown && shape)) {
+    return;  //return false?
+  } */
+}
+
+// Take in this function again it is Davids.
 function pointerDown(event) {
   Tone.start(); // browsers only allow sound after the player has pressed something
 
@@ -137,7 +180,6 @@ function pointerDown(event) {
 function pointerUp(event) {
   synth1.triggerRelease();
 }
-
 
 // ---------- Setup ----------
 // Setup is run once, at the start of the program. It sets everything up for us!
@@ -150,17 +192,18 @@ function setup() {
   example.setPosition(0.5, 0.5); */
 
   // Put your event listener code here
- // window.addEventListener("pointerdown", pointerDown);  // commented out to try the shape.e.
+  // window.addEventListener("pointerdown", pointerDown);  // commented out to try the shape.e.
   window.addEventListener("pointermove", pointerMove);
   //window.addEventListener("pointerup", pointerUp)
-  //document.addEventListener("keydown", startNote);
+  document.addEventListener("keydown", startNote);
   document.addEventListener("keyup", stopNote);
   document.addEventListener("keydown", startDetune);
 
   shape.element.addEventListener("pointerdown", pointerDown);
   shape.element.addEventListener("pointerup", pointerUp);
+  shape.element.addEventListener("pointerenter", pointerEnter);
   shape.element.addEventListener("pointerleave", pointerUp);
-
+  shape.element.addEventListener("pointerleave", pointerleave);
 
 }
 
