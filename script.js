@@ -32,7 +32,7 @@ const note = "C4"; // the note played when the pointer goes down
 // State variables are the parts of your program that change over time.
 // For example: where the pointer is, how fast it's moving, or whether a drone is on.
 const shape = createShape("shape");
-  shape.setPosition(0.5, 0.5); // This should maybe be in Setup
+shape.setPosition(0.5, 0.5); // This should maybe be in Setup
 
 let octave = 4;
 
@@ -59,9 +59,9 @@ function use() {
 // KEYBOARD ---------------
 
 function noteFor(key) {
-  if (key==="q") {
+  if (key === "q") {
     return "A" + octave;
-  } else if(key==="w") {
+  } else if (key === "w") {
     return "B" + octave;
   } else if (key === "e") {
     return "C" + octave;
@@ -75,10 +75,9 @@ function noteFor(key) {
     return "G" + octave;
   }
   return "";
-
 }
 
-/*function startNote(event) {
+function startNote(event) {
   Tone.start();
   if (event && event.repeat) {
     return;
@@ -88,34 +87,22 @@ function noteFor(key) {
     return;
    } */
 
-  /*   const note = noteFor(event.key);
+  const note = noteFor(event.key);
 
-     if (note !== "") {
-      synth1.triggerAttack(note);
-
-     }
-
-  } */
-
-function startDetune() {
-
+  if (note !== "") {
+    synth1.triggerAttack(note);
+  }
+}
+function pointerEnter(event) {
+  //pointerenter är = shape? Let currentshape..
+  if (createShape) {
+    startDetune();
+  }
 }
 
-function stopNote(event) {         //Doubble check the logic of this one.
-    if(noteFor(event.key) !== "") {
-      synth1.triggerRelease();
-    }
-  }
-
-
-function pointerMove(event) {
-  let normX = event.clientX / window.innerWidth;
-  let normY = event.clientY / window.innerHeight;
-
- /* console.log(normX, normY);
-    synth1.detune.value = -1200 + normX * 2400; */
-
-/* if(pointerDown && shape) {
+function startDetune(key) {
+  pointerMove = key === "z" && pointerEnter; //z is still not working but detune kinda do.
+  /* if(pointerDown && shape) {     //Look in physical notes 26-10, page 10.
     startNote();
     console.log(normX, normY);
     synth1.detune.value = -1200 + normX * 2400;
@@ -126,7 +113,33 @@ function pointerMove(event) {
   } */
 }
 
-    // Take in this function again it is Davids.
+function stopNote(event) {
+  //Doubble check the logic of this one.
+  if (noteFor(event.key) !== "") {
+    synth1.triggerRelease();
+  }
+}
+
+function pointerMove(event) {
+  // if (pointerEnter) {}
+  let normX = event.clientX / window.innerWidth;
+  let normY = event.clientY / window.innerHeight;
+
+  console.log(normX, normY);
+  synth1.detune.value = -1200 + normX * 2400;
+
+  /* if(pointerDown && shape) {
+    startNote();
+    console.log(normX, normY);
+    synth1.detune.value = -1200 + normX * 2400;
+  } else
+
+  if(!(pointerDown && shape)) {
+    return;  //return false?
+  } */
+}
+
+// Take in this function again it is Davids.
 function pointerDown(event) {
   Tone.start(); // browsers only allow sound after the player has pressed something
 
@@ -137,7 +150,6 @@ function pointerDown(event) {
 function pointerUp(event) {
   synth1.triggerRelease();
 }
-
 
 // ---------- Setup ----------
 // Setup is run once, at the start of the program. It sets everything up for us!
@@ -150,18 +162,17 @@ function setup() {
   example.setPosition(0.5, 0.5); */
 
   // Put your event listener code here
- // window.addEventListener("pointerdown", pointerDown);  // commented out to try the shape.e.
+  // window.addEventListener("pointerdown", pointerDown);  // commented out to try the shape.e.
   window.addEventListener("pointermove", pointerMove);
   //window.addEventListener("pointerup", pointerUp)
-  //document.addEventListener("keydown", startNote);
+  document.addEventListener("keydown", startNote);
   document.addEventListener("keyup", stopNote);
   document.addEventListener("keydown", startDetune);
 
   shape.element.addEventListener("pointerdown", pointerDown);
   shape.element.addEventListener("pointerup", pointerUp);
+  shape.element.addEventListener("pointerenter", pointerEnter);
   shape.element.addEventListener("pointerleave", pointerUp);
-
-
 }
 
 setup(); // Always remember to call setup()!
