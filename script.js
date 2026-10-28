@@ -28,6 +28,11 @@ import { createShape } from "./shape.js";
 // For example: which notes you can play, how fast things move, the tempo.
 const note = "C4"; // the note played when the pointer goes down
 const aMinorChord = ["A3", "C4", "E4"];
+const A = "A1";
+const B = "E3";
+const C = "A3";
+
+const rythmPattern = [A, B, C, A, B, C, A, B, C, A, B, C]; // Can I do the repetition in another way.
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
 // For example: where the pointer is, how fast it's moving, or whether a drone is on.
@@ -37,7 +42,7 @@ shape.setPosition(0.5, 0.5); // This should maybe be in Setup
 const circle = createShape("cicle");
 circle.setPosition(0.3, 0.3);
 
-let inside = createShape;   //Stay or take away?
+let inside = createShape; //Stay or take away?
 
 let octave = 4;
 
@@ -46,6 +51,8 @@ let octave = 4;
 const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
 
 const synth1 = new Tone.AMSynth().toDestination(); //This is going to be changed to flute
+
+const drums = new Tone.MembraneSynth().toDestination();
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
 function update() {
@@ -80,7 +87,7 @@ function noteFor(key) {
   } else if (key === "u") {
     return "G" + octave;
   } else if (key === "i") {
-    playAMinorChord();       //Why does it double play? How do I change that?
+    playAMinorChord(); //Why does it double play? How do I change that?
   }
   return "";
 }
@@ -112,7 +119,7 @@ function playAMinorChord() {
 
 function pointerEnter(event) {
   //pointerenter är = shape? Let currentshape..
-  inside = true;
+  // inside = true;
   if (createShape) {
     startDetune();
   }
@@ -121,10 +128,10 @@ function pointerEnter(event) {
   } */
 }
 
-function pointerleave(event) {
+/*function pointerleave(event) {
   inside = false;
   synth.triggerRelease();
-}
+}*/
 
 function startDetune(key) {
   pointerMove = key === "z" && pointerEnter; //z is still not working but detune kinda do.
@@ -149,10 +156,8 @@ function stopNote(event) {
 
 function pointerMove(event) {
   if (pointerEnter && shape) {
-    let normX = event.clientX  / window.innerWidth;
-    let normY = event.clientY  / window.innerHeight;
-
-
+    let normX = event.clientX / window.innerWidth;
+    let normY = event.clientY / window.innerHeight;
 
     console.log(normX, normY);
     synth1.detune.value = -1200 + normX * 2400; //-1200 + normX * 2400;
@@ -193,7 +198,7 @@ function setup() {
 
   // Put your event listener code here
   // window.addEventListener("pointerdown", pointerDown);  // commented out to try the shape.e.
-  window.addEventListener("pointermove", pointerMove);
+  shape.element.addEventListener("pointermove", pointerMove); //This was window before.
   //window.addEventListener("pointerup", pointerUp)
   document.addEventListener("keydown", startNote);
   document.addEventListener("keyup", stopNote);
@@ -204,7 +209,6 @@ function setup() {
   shape.element.addEventListener("pointerenter", pointerEnter);
   shape.element.addEventListener("pointerleave", pointerUp);
   shape.element.addEventListener("pointerleave", pointerleave);
-
 }
 
 setup(); // Always remember to call setup()!
