@@ -42,15 +42,13 @@ shape.setPosition(0.5, 0.5); // This should maybe be in Setup
 const circle = createShape("cicle");
 circle.setPosition(0.3, 0.3);
 
-let inside = createShape; //Stay or take away?
-
 let octave = 4;
 
 // ---------- Sound ----------
 // Make the instruments and plug them into the speakers.
 const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
 
-const synth1 = new Tone.AMSynth().toDestination(); //This is going to be changed to flute
+const synth1 = new Tone.Synth().toDestination(); //This is going to be changed to flute
 
 const drums = new Tone.MembraneSynth().toDestination();
 // ---------- Update ----------
@@ -98,11 +96,6 @@ function startNote(event) {
     return;
   }
 
-  // The thing above worked.
-  /*if (event.repeat) {
-    return;
-   } */
-
   const note = noteFor(event.key);
 
   if (note !== "") {
@@ -114,27 +107,36 @@ function startNote(event) {
 }
 
 function playAMinorChord() {
-  synth.triggerAttackRelease(aMinorChord, "2n"); //måste få den att stoppa
+  synth.triggerAttackRelease(aMinorChord); //måste få den att stoppa
 }
 
 function pointerEnter(event) {
+  if(event.target === shape) {
+    startDetune();
+  } else if(event.target === circle) {
+    playRythmPattern();
+  }
+}
+ /*function pointerEnter(event) {
   //pointerenter är = shape? Let currentshape..
   // inside = true;
-  if (createShape) {
+  /*if (pointerEnter === shape) {
     startDetune();
   }
+
+
   /*else if (createShape = false) {
     return;
-  } */
-}
+  }
+ } */
 
 /*function pointerleave(event) {
   inside = false;
   synth.triggerRelease();
-}*/
+} */
 
 function startDetune(key) {
-  pointerMove = key === "z" && pointerEnter; //z is still not working but detune kinda do.
+  pointerMove /*= key === "z" */ && pointerEnter; //z is still not working but detune kinda do.
   /* if(pointerDown && shape) {     //Look in physical notes 26-10, page 10.
     startNote();
     console.log(normX, normY);
@@ -146,6 +148,7 @@ function startDetune(key) {
   } */
 }
 
+
 function stopNote(event) {
   //Doubble check the logic of this one.
   if (noteFor(event.key) !== "") {
@@ -155,13 +158,12 @@ function stopNote(event) {
 }
 
 function pointerMove(event) {
-  if (pointerEnter && shape) {
-    let normX = event.clientX / window.innerWidth;
-    let normY = event.clientY / window.innerHeight;
+  //if (pointerEnter && shape) {norm ect ect} This is basically useless..
+  let normX = event.clientX / window.innerWidth;
+  let normY = event.clientY / window.innerHeight;
 
-    console.log(normX, normY);
-    synth1.detune.value = -1200 + normX * 2400; //-1200 + normX * 2400;
-  }
+  console.log(normX, normY);
+  synth1.detune.value = -1200 + normX * 2400; //-1200 + normX * 2400;
 
   /* if(pointerDown && shape) {
     startNote();
@@ -186,6 +188,13 @@ function pointerUp(event) {
   synth1.triggerRelease();
 }
 
+function playRythmPattern() {
+  let now = Tone.now();
+  for (let i = 0; i < rythmPattern.length; i++) {
+    drums.triggerAttackRelease(rythmPattern[i], "8n", now + i * 0.4);
+  }
+}
+
 // ---------- Setup ----------
 // Setup is run once, at the start of the program. It sets everything up for us!
 function setup() {
@@ -200,15 +209,26 @@ function setup() {
   // window.addEventListener("pointerdown", pointerDown);  // commented out to try the shape.e.
   shape.element.addEventListener("pointermove", pointerMove); //This was window before.
   //window.addEventListener("pointerup", pointerUp)
-  document.addEventListener("keydown", startNote);
+  document.addEventListener("keydown", startNote); //Shape?
   document.addEventListener("keyup", stopNote);
-  document.addEventListener("keydown", startDetune);
+  // document.addEventListener("keydown", startDetune);
 
   shape.element.addEventListener("pointerdown", pointerDown);
   shape.element.addEventListener("pointerup", pointerUp);
   shape.element.addEventListener("pointerenter", pointerEnter);
   shape.element.addEventListener("pointerleave", pointerUp);
-  shape.element.addEventListener("pointerleave", pointerleave);
+
+  
+  circle.element.addEventListener("pointerdown", pointerDown);
+  circle.element.addEventListener("pointerup", pointerUp);
+  circle.element.addEventListener("pointerenter", pointerEnter);
+  circle.element.addEventListener("pointerleave", pointerUp);
+
+  //Test
+ circle.element.addEventListener("pointerdown", playRythmPattern);
+ shape.element.addEventListener("pointerenter", startDetune);
+
+  // shape.element.addEventListener("pointerleave", pointerleave);
 }
 
 setup(); // Always remember to call setup()!
