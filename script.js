@@ -24,53 +24,69 @@
 import { createShape } from "./shape.js";
 
 // ---------- Settings ----------
-// Settings variables should contain all of the "fixed" parts of your programs
-// For example: which notes you can play, how fast things move, the tempo.
-//const note = "C4"; // the note played when the pointer goes down
+
 const aMinorChord = ["A3", "C4", "E4"];
 const A = "A1";
 const B = "E3";
 const C = "A3";
 
-const rythmPattern = [A, B, C, A, B, C, A, B, C, A, B, C]; // Can I do the repetition in another way.
+const rythmPattern = [A, B, C, A, B, C, A, B, C, A, B, C, A, B, C, A, B, C]; // Can I do the repetition in another way.
+
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
-// For example: where the pointer is, how fast it's moving, or whether a drone is on.
-const shape = createShape("shape");
-shape.setPosition(0.5, 0.5); // This should maybe be in Setup
-shape.setSize(200);
-shape.setColour(600, 30, 50);
-shape.setRoundedness(0.05);
 
-const circle = createShape("circle");
-circle.setPosition(0.3, 0.3);
-
-/*const volCicle = createShape("volcircle");
-volCircle.setPosition(0.1, 0.1); */
-
-let octave = 4;
-
+let volcircle;
+let volcircleSize = 100;
+let inside = false;
 let lastX = 0;
 let lastY = 0;
+let lastTime = 0;
+let speeds = [];
 
+let isSynthPlaying = false;
+let octave = 5;
 
 // ---------- Sound ----------
-// Make the instruments and plug them into the speakers.
-const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
-
-const synth1 = new Tone.Synth().toDestination(); //This is going to be changed to flute
-
+// Instruments plugged into the speakers.
+const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+const synth1 = new Tone.Synth().toDestination();
 const drums = new Tone.MembraneSynth().toDestination();
+
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
 function update() {
   setTimeout(update, 100); // call update() again in 100 milliseconds
+
+  let total = 0;
+  for (let i = 0; i < speeds.length; i++) {
+    total += speeds[i];
+  }
+
+  let averageSpeed = speeds.length > 0 ? total / speeds.length : 0;
+
+  if (averageSpeed > 0.05) {
+    volcircleSize += averageSpeed * 25;
+  } else {
+    volcircleSize -= 8;
+  }
+
+  volcircleSize = Math.max(60, Math.min(400, volcircleSize));
 }
 
 // ---------- Use ----------
-// Use the state to make sound and move shapes. This is called every 100ms.
+// This is called every 100ms.
+
 function use() {
   setTimeout(use, 100); // call use() again in 100 milliseconds
+
+  if (volcircle && inside) {
+    volcircle.setSize(volcircleSize);   // Volume based on size.
+
+    let percentage = (volcircleSize - 60) / (400 - 60); // 400-60
+    let volume = -30 + percentage * 30;
+
+    synth.volume.rampTo(volume, 0.05);
+  }
 }
 
 // ---------- Controls (Event Handlers) ----------
@@ -94,8 +110,6 @@ function noteFor(key) {
     return "F" + octave;
   } else if (key === "u") {
     return "G" + octave;
-  } else if (key === "i") {
-    playAMinorChord(); //Why does it double play? How do I change that?
   }
   return "";
 }
@@ -110,82 +124,19 @@ function startNote(event) {
 
   if (note !== "") {
     synth1.triggerAttack(note);
-  } else if (note !== "") {
-    //Test för chord
-    synth.triggerAttack(note);
   }
-}
-
-function playAMinorChord() {
-  synth.triggerAttackRelease(aMinorChord); //måste få den att stoppa
-}
-
-function pointerEnter(event) {
-  if (event.target === shape) {
-    startDetune();
-  } else if (event.target === circle) {
-    playRythmPattern();
-  }
-}
-/*function pointerEnter(event) {
-  //pointerenter är = shape? Let currentshape..
-  // inside = true;
-  /*if (pointerEnter === shape) {
-    startDetune();
-  }
-
-
-  /*else if (createShape = false) {
-    return;
-  }
- } */
-
-/*function pointerleave(event) {
-  inside = false;
-  synth.triggerRelease();
-} */
-
-function startDetune(key) {
-  pointerMove /*= key === "z" */ && pointerEnter; //z is still not working but detune kinda do.
-  /* if(pointerDown && shape) {     //Look in physical notes 26-10, page 10.
-    startNote();
-    console.log(normX, normY);
-    synth1.detune.value = -1200 + normX * 2400;
-  } else
-
-  if(!(pointerDown && shape)) {
-    return;  //return false?
-  } */
 }
 
 function stopNote(event) {
-  //Doubble check the logic of this one.
   if (noteFor(event.key) !== "") {
     synth1.triggerRelease();
-    synth.triggerRelease();
   }
 }
 
-function pointerMove(event) {
-  //if (pointerEnter && shape) {norm ect ect} This is basically useless..
+// EFFECTS ....................
 
-  let normX = event.clientX / window.innerWidth;
-  let normY = event.clientY / window.innerHeight;
-
-  console.log(normX, normY);
-  synth1.detune.value = -1200 + normX * 2400; //-1200 + normX * 2400;
-}
-
-// Take in this function again it is Davids.
-function pointerDown(event) {
-  Tone.start(); // browsers only allow sound after the player has pressed something
-
-  /* console.log("Pointer down at", event.clientX, event.clientY);
-  synth.triggerAttackRelease(note, "8n"); // play the note for an eighth note */
-}
-
-function pointerUp(event) {
-  synth1.triggerRelease();
+function startDetune(event) {
+  console.log("pointer starts detune");
 }
 
 function playRythmPattern() {
@@ -195,38 +146,146 @@ function playRythmPattern() {
   }
 }
 
+function playAMinorChord() {
+  synth.triggerAttackRelease(aMinorChord);
+}
+
+// POINTER ....................
+
+function pointerEnter(event) {
+  if (volcircle) {
+    inside = true;
+
+    if (!isSynthPlaying) {
+      synth.volume.value = -30;
+      synth.triggerAttack(aMinorChord);
+      isSynthPlaying = true;
+    }
+
+    volcircle.setColour(600, 180, 50);
+
+    // Calculates where the pointer is, and how fast it moves.
+    lastX = event.clientX / window.innerWidth;
+    lastY = event.clientY / window.innerHeight;
+    lastTime = Date.now();
+  }
+}
+
+function pointerLeave() {
+  inside = false;
+
+  if (isSynthPlaying) {
+    synth.triggerRelease(aMinorChord);
+    isSynthPlaying = false;
+  }
+
+  if (volcircle) {
+    volcircle.setColour(600, 180, 70);
+  }
+}
+
+function pointerMoveVolcircle(event) {
+  if (!inside) {
+    return; // only while on the shape
+  }
+  let normX = event.clientX / window.innerWidth;
+  let normY = event.clientY / window.innerHeight;
+  let now = Date.now();
+  let distance = Math.hypot(normX - lastX, normY - lastY);
+  let seconds = (now - lastTime) / 1000;
+  if (seconds === 0) {
+    return; // two events in the same millisecond: no time has passed, so no speed
+  }
+  let speed = distance / seconds; // screens per second
+  lastX = normX; // saves current position
+  lastY = normY;
+  lastTime = now;
+
+  speeds.push(speed);
+  setTimeout(forgetOldest, 300);
+  useAverage();
+}
+
+function pointerMoveSquare(event) {
+  let normX = event.clientX / window.innerWidth;
+  let normY = event.clientY / window.innerHeight;
+
+  console.log(normX, normY);
+  synth1.detune.value = -1200 + normX * 2400;
+}
+
+function forgetOldest() {
+  speeds.shift();
+  useAverage();
+}
+
+function useAverage() { // Avarage speed of array.
+  let total = 0;
+  for (let i = 0; i < speeds.length; i++) {
+    total = total + speeds[i];
+  }
+  let average = 0;
+  if (speeds.length > 0) {
+    average = total / speeds.length;
+  }
+
+  let volume = -30 + average * 10;
+  if (volume > 0) {
+    volume = 0;
+  }
+
+  synth.volume.value = volume;
+}
+
+function pointerDown(event) {
+  Tone.start(); // browsers only allow sound after the player has pressed something
+
+  if (event === square) {
+    startDetune();
+  } else if (event === circle) {
+    playRythmPattern();
+  }
+}
+
+function pointerUp(event) {
+  synth1.triggerRelease();
+}
+
 // ---------- Setup ----------
 // Setup is run once, at the start of the program. It sets everything up for us!
 function setup() {
   update(); // start the update loop
   use(); // start the use loop
 
-  // Example: a shape near the middle of the window. Replace it with your own.
-  /*const example = createShape("example");
-  example.setPosition(0.5, 0.5); */
+  volcircle = createShape("volcircle");
+  volcircle.setSize(100);
+  volcircle.setColour(600, 180, 70);
+  volcircle.setPosition(0.4, 0.15); // 400 300
 
-  // Put your event listener code here
-  // window.addEventListener("pointerdown", pointerDown);  // commented out to try the shape.e.
-  shape.element.addEventListener("pointermove", pointerMove); //This was window before.
-  //window.addEventListener("pointerup", pointerUp)
-  document.addEventListener("keydown", startNote); //Shape?
+  const square = createShape("square");
+  square.setPosition(0.02, 0.55);
+  square.setSize(200);
+  square.setColour(600, 160, 20);
+  square.setRoundedness(0.2);
+
+  const circle = createShape("circle");
+  circle.setPosition(0.02, 0.06);
+  circle.setSize(200);
+  circle.setColour(600, 110, 80);
+
+  window.addEventListener("pointerup", pointerUp);
+  document.addEventListener("keydown", startNote);
   document.addEventListener("keyup", stopNote);
-  // document.addEventListener("keydown", startDetune);
 
-  shape.element.addEventListener("pointerdown", pointerDown);
-  shape.element.addEventListener("pointerup", pointerUp);
-  shape.element.addEventListener("pointerenter", pointerEnter);
-  shape.element.addEventListener("pointerleave", pointerUp);
-
-  circle.element.addEventListener("pointerdown", pointerDown);
-  circle.element.addEventListener("pointerup", pointerUp);
-  circle.element.addEventListener("pointerenter", pointerEnter);
-  circle.element.addEventListener("pointerleave", pointerUp);
+  square.element.addEventListener("pointermove", pointerMoveSquare);
+  square.element.addEventListener("pointerleave", pointerUp);
+  square.element.addEventListener("pointerdown", startDetune);
 
   circle.element.addEventListener("pointerdown", playRythmPattern);
-  shape.element.addEventListener("pointerenter", startDetune);
 
-  // shape.element.addEventListener("pointerleave", pointerleave);
+  volcircle.element.addEventListener("pointerenter", pointerEnter);
+  volcircle.element.addEventListener("pointerleave", pointerLeave);
+  volcircle.element.addEventListener("pointermove", pointerMoveVolcircle);
+  volcircle.element.addEventListener("pointerdown", playAMinorChord);
 }
-
 setup(); // Always remember to call setup()!
