@@ -1,7 +1,7 @@
 # My instrument
 
 **Play it here:** <!-- Paste your GitHub Pages link here, e.g. https://idbcourses.github.io/your-repo-name/ -->
-// https://github.com/IDBCourses/ht26-a3-matildanejbo-dotcom.git 
+// idbcourses.github.io/ht26-a3-matilda-nejbo/
 
 **Name:** Matilda Månsson Nejbo, at2724@mau.se
 
