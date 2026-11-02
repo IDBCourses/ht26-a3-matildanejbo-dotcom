@@ -26,7 +26,7 @@ import { createShape } from "./shape.js";
 // ---------- Settings ----------
 // Settings variables should contain all of the "fixed" parts of your programs
 // For example: which notes you can play, how fast things move, the tempo.
-const note = "C4"; // the note played when the pointer goes down
+//const note = "C4"; // the note played when the pointer goes down
 const aMinorChord = ["A3", "C4", "E4"];
 const A = "A1";
 const B = "E3";
@@ -38,11 +38,21 @@ const rythmPattern = [A, B, C, A, B, C, A, B, C, A, B, C]; // Can I do the repet
 // For example: where the pointer is, how fast it's moving, or whether a drone is on.
 const shape = createShape("shape");
 shape.setPosition(0.5, 0.5); // This should maybe be in Setup
+shape.setSize(200);
+shape.setColour(600, 30, 50);
+shape.setRoundedness(0.05);
 
-const circle = createShape("cicle");
+const circle = createShape("circle");
 circle.setPosition(0.3, 0.3);
 
+/*const volCicle = createShape("volcircle");
+volCircle.setPosition(0.1, 0.1); */
+
 let octave = 4;
+
+let lastX = 0;
+let lastY = 0;
+
 
 // ---------- Sound ----------
 // Make the instruments and plug them into the speakers.
@@ -111,13 +121,13 @@ function playAMinorChord() {
 }
 
 function pointerEnter(event) {
-  if(event.target === shape) {
+  if (event.target === shape) {
     startDetune();
-  } else if(event.target === circle) {
+  } else if (event.target === circle) {
     playRythmPattern();
   }
 }
- /*function pointerEnter(event) {
+/*function pointerEnter(event) {
   //pointerenter är = shape? Let currentshape..
   // inside = true;
   /*if (pointerEnter === shape) {
@@ -148,7 +158,6 @@ function startDetune(key) {
   } */
 }
 
-
 function stopNote(event) {
   //Doubble check the logic of this one.
   if (noteFor(event.key) !== "") {
@@ -159,29 +168,20 @@ function stopNote(event) {
 
 function pointerMove(event) {
   //if (pointerEnter && shape) {norm ect ect} This is basically useless..
+
   let normX = event.clientX / window.innerWidth;
   let normY = event.clientY / window.innerHeight;
 
   console.log(normX, normY);
   synth1.detune.value = -1200 + normX * 2400; //-1200 + normX * 2400;
-
-  /* if(pointerDown && shape) {
-    startNote();
-    console.log(normX, normY);
-    synth1.detune.value = -1200 + normX * 2400;
-  } else
-
-  if(!(pointerDown && shape)) {
-    return;  //return false?
-  } */
 }
 
 // Take in this function again it is Davids.
 function pointerDown(event) {
   Tone.start(); // browsers only allow sound after the player has pressed something
 
-  console.log("Pointer down at", event.clientX, event.clientY);
-  synth.triggerAttackRelease(note, "8n"); // play the note for an eighth note
+  /* console.log("Pointer down at", event.clientX, event.clientY);
+  synth.triggerAttackRelease(note, "8n"); // play the note for an eighth note */
 }
 
 function pointerUp(event) {
@@ -218,15 +218,13 @@ function setup() {
   shape.element.addEventListener("pointerenter", pointerEnter);
   shape.element.addEventListener("pointerleave", pointerUp);
 
-  
   circle.element.addEventListener("pointerdown", pointerDown);
   circle.element.addEventListener("pointerup", pointerUp);
   circle.element.addEventListener("pointerenter", pointerEnter);
   circle.element.addEventListener("pointerleave", pointerUp);
 
-  //Test
- circle.element.addEventListener("pointerdown", playRythmPattern);
- shape.element.addEventListener("pointerenter", startDetune);
+  circle.element.addEventListener("pointerdown", playRythmPattern);
+  shape.element.addEventListener("pointerenter", startDetune);
 
   // shape.element.addEventListener("pointerleave", pointerleave);
 }
