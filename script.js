@@ -1,23 +1,5 @@
 /*
  * IDB Programming: A3 — a musical instrument
- *
- * All of the code for your instrument goes in this file. It's split into sections:
- *   settings — the "fixed" parts of your program
- *   state    — the parts of your program that change over time
- *   sound    — the Tone.js instruments and effects
- *   update   — updates the state every 100ms, if necessary
- *   use      — uses the state to make sound and shapes every 100ms, if necessary
- *   controls — what happens when the player uses the pointer
- *   setup    — starts everything
- *
- * The pointer events change the state. update() and use() each run every
- * 100ms, in a loop:
- *   1. update: change the state, e.g. based on time or on the pointer's movement
- *   2. use:    make sound and move shapes, based on the state
- *
- * Shapes come from shape.js: createShape() makes one, and its methods
- * (setPosition, setSize, setColour ...) change it.
- *
  * Tone.js documentation: https://tonejs.github.io/docs/15.1.22/
  */
 
@@ -80,7 +62,7 @@ function use() {
   setTimeout(use, 100); // call use() again in 100 milliseconds
 
   if (volcircle && inside) {
-    volcircle.setSize(volcircleSize);   // Volume based on size.
+    volcircle.setSize(volcircleSize); // Volume based on size.
 
     let percentage = (volcircleSize - 60) / (400 - 60); // 400-60
     let volume = -30 + percentage * 30;
@@ -219,7 +201,8 @@ function forgetOldest() {
   useAverage();
 }
 
-function useAverage() { // Avarage speed of array.
+function useAverage() {
+  // Avarage speed of array.
   let total = 0;
   for (let i = 0; i < speeds.length; i++) {
     total = total + speeds[i];
