@@ -14,8 +14,7 @@
 | When you press down one or several keys between Q-U            | The sound of the notes A-G will be played | Keyboard |
 | -------------------------------------------------------------- | -------------------------------- | ------------- |
 | Click the left cirlce                                         | A rhythm plays                   | Left Circle   |
-|--------------------------------------------------------------- | -------------------------------- | -------------- |
-| Square: Press down one or more keys between Q-U while playing with the pointer within the square. | The note you play will detune. | Square |
+| Press down one or more keys between Q-U while playing with the pointer within the square. | The note you play will detune. | Square |
 | When you enter the right circle and move the pointer quickly or slowely | A minor chord will play. Depending on how fast you move the pointer, the volume will get louder or quieter. The size of the circle will also shrink or grow | Right Circle |
 
 
