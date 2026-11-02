@@ -1,8 +1,9 @@
 # My instrument
 
 **Play it here:** <!-- Paste your GitHub Pages link here, e.g. https://idbcourses.github.io/your-repo-name/ -->
+// https://github.com/IDBCourses/ht26-a3-matildanejbo-dotcom/blob/main/script.js
 
-**Name:** <!-- Your name and MAU ID -->
+**Name:** Matilda Månsson Nejbo, at2724@mau.se
 
 <!-- One or two sentences: what kind of instrument is it, and what is it like to play? -->
 
@@ -10,10 +11,14 @@
 
 <!-- Fill in the table with a row for everything the player can do with the pointer: clicking, moving slowly or fast, moving in circles, holding still... Say what happens to the sound and to the shapes. If you added keys, give them rows too. -->
 
-| When you...  | The sound...                         | The shapes... |
-| ------------ | ------------------------------------ | ------------- |
-| Click or tap | Plays a C4 (the example: replace it) | Nothing yet   |
-|              |                                      |               |
+| When you press down one or several keys between Q-U            | The sound of the notes A-G will be played | Keyboard |
+| -------------------------------------------------------------- | -------------------------------- | ------------- |
+| Click the left cirlce                                         | A rhythm plays                   | Left Circle   |
+|--------------------------------------------------------------- | -------------------------------- | -------------- |
+| Square: Press down one or more keys between Q-U while playing with the pointer within the square. | The note you play will detune. | Square |
+| When you enter the right circle and move the pointer quickly or slowely | A minor chord will play. Depending on how fast you move the pointer, the volume will get louder or quieter. The size of the circle will also shrink or grow | Right Circle |
+
+
 
 <!-- Anything else a player needs to know: how to get started, a good thing to try first. -->
 
