@@ -12,6 +12,7 @@
 <!-- Fill in the table with a row for everything the player can do with the pointer: clicking, moving slowly or fast, moving in circles, holding still... Say what happens to the sound and to the shapes. If you added keys, give them rows too. -->
 
 | Action  | What will happen  | Shape |
+| --------- | ----------------- | -------- |
 | When you press down one or several keys between Q-U            | The sound of the notes A-G will be played | Keyboard |
 | Click the left cirlce                                         | A rhythm plays                   | Left Circle   |
 | Press down one or more keys between Q-U while playing with the pointer within the square. | The note you play will detune. | Square |
