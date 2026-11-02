@@ -1,8 +1,9 @@
 # My instrument
 
 **Play it here:** <!-- Paste your GitHub Pages link here, e.g. https://idbcourses.github.io/your-repo-name/ -->
+// https://github.com/IDBCourses/ht26-a3-matildanejbo-dotcom/blob/main/script.js
 
-**Name:** <!-- Your name and MAU ID -->
+**Name:** Matilda Månsson Nejbo, at2724@mau.se
 
 <!-- One or two sentences: what kind of instrument is it, and what is it like to play? -->
 
